@@ -75,9 +75,9 @@ namespace ProfileImport
             }
             else
             {
-#if DEBUG
+                #if DEBUG
                 console.WrapLine("Found path for R2modman.  " + r2path);
-#endif
+                #endif
 
             }
 
@@ -91,9 +91,9 @@ namespace ProfileImport
             }
             else
             {
-#if DEBUG
+                #if DEBUG
                 console.WrapLine("Found path for Valheim.  " + valPath);
-#endif
+                #endif
             }
 
             string profilePath = r2path + $"{PathSep}Valheim{PathSep}profiles{PathSep}{Name}";
@@ -105,12 +105,12 @@ namespace ProfileImport
             }
             else
             {
-#if DEBUG
+                #if DEBUG
                 console.WrapLine("Profile path validated.  " + profilePath);
-#endif
+                #endif
             }
 
-            if (Process.GetProcessesByName("valheim.exe").Length > 0)
+            if (Process.GetProcessesByName("valheim").Length > 0)
             {
                 error.WrapLine("Error, Valheim is currently running.  Please exit the game and rerun.");
                 Environment.Exit(-1);
@@ -236,24 +236,26 @@ namespace ProfileImport
             switch (code)
             {
                 case 0:
-                    return $"The files already exist in {path}, the copy operation was skipped.";
+                    return $"No action performed. Source and {path} are synchronized.";
                 case 1:
-                    return "All files were copied successfully.";
+                    return "Files were copied successfully.";
                 case 2:
-                    return $"There are some additional files in {path} that aren't present in the source directory. No files were copied.";
+                    return $"Extra files or directories were detected in {path}.";
                 case 3:
-                    return $"Some files were copied. Additional files were present in {path}. No failure was met.";
+                    return $"Some files were copied. Extra files or directories were detected in {path}.";
+                case 4:
+                    return $"Mismatched files or directories found in {path}";
                 case 5:
-                    return $"Some files were copied. Some files were mismatched in {path}. No failure was met.";
+                    return $"Some files were copied. Some files or directories were mismatched in {path}.";
                 case 6:
-                    return $"Additional files and mismatched files exist. No files were copied and no failures were met. Which means that the files already exist in {path}.";
+                    return $"Extra files or directories were detected and also mismatched in {path}. No action performed.";
                 case 7:
                     return $"Files were copied, a file mismatch was present, and additional files were present in ${path}.";
                 case 8:
-                    return $"Several files didn't copy in {path}";
+                    return $"At least one file or directory could not be copied in {path}.";
             }
 
-            return $"At least one failure occurred during the copy operation in {path}";
+            return $"At least one failure occurred during the copy operation in {path}.";
         }
 
 
