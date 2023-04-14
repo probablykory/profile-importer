@@ -9,7 +9,7 @@ using ConsoleToolkit.ApplicationStyles;
 using ConsoleToolkit.CommandLineInterpretation.ConfigurationAttributes;
 using ConsoleToolkit.ConsoleIO;
 using System.Diagnostics;
-using ConsoleToolkit.ApplicationStyles.Internals;
+using System.Text;
 
 namespace ProfileImport
 {
@@ -153,13 +153,14 @@ namespace ProfileImport
 
             string checkForRemoval = string.Empty;
             string exclusions = string.Empty;
+            string inclusions = string.Empty;
             if (PreserveConfigs)
             {
                 exclusions = "config ";
             }
 
-            // Get exclusions the list of disabled mods in mods.yml
-            checkForRemoval = GetExclusionList(GetYamlPackages(profilePath + PathSep + "mods.yml"));
+            // Get the full package list as well as exclusions of disabled mods in mods.yml
+            (inclusions, checkForRemoval) = GetPackageCategories(GetYamlPackages(profilePath + PathSep + "mods.yml"));
             exclusions = exclusions + checkForRemoval;
             if (!string.IsNullOrEmpty(exclusions))
             {
@@ -200,8 +201,9 @@ namespace ProfileImport
             }
             else if (maxResult == 1)
             { 
-                console.WrapLine($"Imported {Name} profile successfully.");
+                console.WrapLine($"Imported \"{Name}\" profile successfully.");
             }
+            console.WrapLine($"Profile \"{Name}\" contains: {inclusions}");
         }
 
         private static int runProcess(string name, string args)
@@ -283,20 +285,24 @@ namespace ProfileImport
             }
         }
 
-        // transform packages list to a string of disabled plugin names
-        public static string GetExclusionList(List<Package> packages)
+        public static (string, string) GetPackageCategories(List<Package> packages)
         {
-            string result = "";
+            StringBuilder disabled = new StringBuilder();
+            StringBuilder enabled = new StringBuilder();
 
-            foreach(var package in packages)
+            foreach (var package in packages)
             {
-                if (package != null && package.Enabled == false)
+                if (package != null)
                 {
-                    result = result + package.Name + " ";
+                    if (package.Enabled)
+                        disabled.Append(package.Name + " ");
+                    else
+                        enabled.Append(package.Name + " ");
+
                 }
             }
 
-            return result.TrimEnd(' ');
+            return (disabled.ToString().TrimEnd(' '), enabled.ToString().TrimEnd(' '));
         }
 
         // This static method attempts to find a valid path amongst the input or default paths, testing against a validate function.
