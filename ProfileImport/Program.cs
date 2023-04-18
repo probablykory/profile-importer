@@ -197,13 +197,13 @@ namespace ProfileImport
 
             if (maxResult == 0)
             {
-                console.WrapLine($"The files and folders already exist in \"{valPath}\", the import was skipped.");
+                console.WrapLine($"The files and folders already exist in \"{valPath}\", the import was skipped.".Green());
             }
             else if (maxResult == 1)
             { 
-                console.WrapLine($"Imported \"{Name}\" profile successfully.");
+                console.WrapLine($"Imported \"{Name}\" profile successfully.".Green());
             }
-            console.WrapLine($"Profile \"{Name}\" contains: {inclusions}");
+            console.WrapLine($"Profile \"{Name}\" contains: {inclusions.DarkGray()}");
         }
 
         private static int runProcess(string name, string args)
@@ -238,9 +238,9 @@ namespace ProfileImport
             switch (code)
             {
                 case 0:
-                    return $"No action performed. Source and {path} are synchronized.";
+                    return $"No action performed. Source and {path} are synchronized.".Green();
                 case 1:
-                    return "Files were copied successfully.";
+                    return "Files were copied successfully.".Green();
                 case 2:
                     return $"Extra files or directories were detected in {path}.";
                 case 3:
@@ -254,10 +254,10 @@ namespace ProfileImport
                 case 7:
                     return $"Files were copied, a file mismatch was present, and additional files were present in ${path}.";
                 case 8:
-                    return $"At least one file or directory could not be copied in {path}.";
+                    return $"At least one file or directory could not be copied in {path}.".Yellow();
             }
 
-            return $"At least one failure occurred during the copy operation in {path}.";
+            return $"At least one failure occurred during the copy operation in {path}.".Red();
         }
 
 
